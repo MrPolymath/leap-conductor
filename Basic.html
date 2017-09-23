@@ -43,22 +43,22 @@
 			onsuccess: function() {
 				MIDI.programChange(0, MIDI.GM.byName[instrumentName].number);
 				console.log("success");
-				socket.on('add_notes', function (data) {
-				  // console.log(counter);
-					// counter++;
-					for (var j = 0; j < data.length; j++){
-						// console.log("midiOn");
-						MIDI.noteOn(0, data[j].note, data[j].volume, 0);
-						// MIDI.noteOn(0, '70', '127', 0);
-					}
-				});
-				// socket.on('add_chords', function (data) {
-				// 	if (data.length) {
-				// 		var inputChords = [data[0].note, data[1].note, data[2].note];
-				// 		// console.log(inputChords);
-				// 		MIDI.chordOn(0, inputChords, data[0].volume, 0);
+				// socket.on('add_notes', function (data) {
+				//   // console.log(counter);
+				// 	// counter++;
+				// 	for (var j = 0; j < data.length; j++){
+				// 		// console.log("midiOn");
+				// 		MIDI.noteOn(0, data[j].note, data[j].volume, 0);
+				// 		// MIDI.noteOn(0, '70', '127', 0);
 				// 	}
 				// });
+				socket.on('add_chords', function (data) {
+					if (data.length) {
+						var inputChords = [data[0].note, data[1].note, data[2].note];
+						// console.log(inputChords);
+						MIDI.chordOn(0, inputChords, data[0].volume, 0);
+					}
+				});
 				socket.on('remove_notes', function(data){
 					for (var j = 0; j < data.length; j++){
 						MIDI.noteOff(0, data[j].note, 0);

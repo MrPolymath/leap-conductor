@@ -138,11 +138,11 @@ io.on('connection', function (socket) {
       }
     timer = setTimeout(repeat, (60*1000)/(activebpm*4));
     if ((previousChord != chordArray) && (chordArray != null)) {
-      // socket.emit('add_chords', chordArray);
       if (previousChord) {
         socket.emit('remove_notes', previousChord);
       }
-      socket.emit('add_notes', chordArray);
+      // socket.emit('add_notes', chordArray);
+      socket.emit('add_chords', chordArray);
       console.log('change!');
       previousChord = chordArray;
     }
