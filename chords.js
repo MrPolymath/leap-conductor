@@ -1,5 +1,16 @@
-var instrument = 'string_ensemble_1'
+var config = require('./config.js');
+
 var volume = 127;
+var instrument = config.instrument;
+
+var chordToNotes = function (chord) {
+    return chords[chord];
+};
+
+if (instrument==null)
+{
+  instrument = 'acoustic_grand_piano';
+}
 
 var chords = {
   'Cs' : [{
@@ -62,10 +73,7 @@ var chords = {
       'note': 61,
       'volume': volume
   }]
-}
-
-var chordToNotes = function (chord) {
-  return chords[chord];
 };
+
 
 module.exports.chordToNotes = chordToNotes;
