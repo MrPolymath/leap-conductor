@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns = "http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<!-- polyfill -->
+	<script src="inc/shim/Base64.js" type="text/javascript"></script>
+	<script src="inc/shim/Base64binary.js" type="text/javascript"></script>
+	<script src="inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+	<!-- midi.js package -->
+	<script src="js/midi/audioDetect.js" type="text/javascript"></script>
+	<script src="js/midi/gm.js" type="text/javascript"></script>
+	<script src="js/midi/loader.js" type="text/javascript"></script>
+	<script src="js/midi/plugin.audiotag.js" type="text/javascript"></script>
+	<script src="js/midi/plugin.webaudio.js" type="text/javascript"></script>
+	<script src="js/midi/plugin.webmidi.js" type="text/javascript"></script>
+	<!-- utils -->
+	<script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
+	<script src="js/util/dom_request_script.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+<!--Added scripts-->
+	<script src="./config.js" type="text/javascript"></script>
+</head>
+<body>
+<img src="./logo.png" width="400px"/>
+<script type="text/javascript">
+	var socket = io('http://localhost');
+	// var keys_down = [];
+	// var oldStreamReceived = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
+	// var streamReceived = [{instrument:'acoustic_grand_piano',note:'55',volume:'127'},{instrument:'acoustic_grand_piano',note:'45',volume:'120'}]
+	// var newElements = []
+	// var oldElements = []
+	// var newProve = true
+	// var oldProve = true
+	var counter = 0;
+//	var instrumentName = 'string_ensemble_1'
+	var instrumentName = instrument;
+
+	window.onload = function () {
+		MIDI.loadPlugin({
+			soundfontUrl: "./soundfont/",
+			instrument:  instrumentName,
+			onprogress: function(state, progress) {
+				console.log(state, progress);
+			},
+			onsuccess: function() {
+
+				MIDI.programChange(0, MIDI.GM.byName[instrumentName].number);
+				console.log("success");
+				// socket.on('add_notes', function (data) {
+				//   // console.log(counter);
+				// 	// counter++;
+				// 	for (var j = 0; j < data.length; j++){
+				// 		// console.log("midiOn");
+				// 		MIDI.noteOn(0, data[j].note, data[j].volume, 0);
+				// 		// MIDI.noteOn(0, '70', '127', 0);
+				// 	}
+				// });
+				socket.on('add_chords', function (data) {
+					if (data.length) {
+						var inputChords = [data[0].note, data[1].note, data[2].note];
+						// console.log(inputChords);
+						MIDI.chordOn(0, inputChords, data[0].volume, 0);
+					}
+				});
+				socket.on('remove_notes', function(data){
+					for (var j = 0; j < data.length; j++){
+						MIDI.noteOff(0, data[j].note, 0);
+					}
+				})
+				// newElements = newElement(oldStreamReceived,streamReceived)
+				// oldElements = oldElement(oldStreamReceived,streamReceived)
+				//
+				// oldStreamReceived = streamReceived
+				// streamReceived = [{instrument:'acoustic_grand_piano',note:'37',volume:'127'}]
+				// newElements = []
+				// oldElements = []
+				// newProve = true
+				// oldProve = true
+			}
+		});
+	};
+
+</script>
+</body>
+</html>
