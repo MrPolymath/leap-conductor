@@ -43,11 +43,11 @@ var controller = Leap.loop(function (frame) {
         // console.log(normalizedHeight);
         // console.log(bpm);
         //If the user is making a fist stop playing music
-        if (getFist(frame) == 1) {
-            if (typeof timer !== 'undefined' && timer !== null) {
-                clearTimeout(timer)
-            }
-        }
+        // if (getFist(frame) == 1) {
+        //     if (typeof timer !== 'undefined' && timer !== null) {
+        //         clearTimeout(timer)
+        //     }
+        // }
         //If your hand is tilted to the right
         // if (getHandTilt(frame) < -0.5) {
         if (isPalmPull(frame,previousFrame)) {
@@ -137,9 +137,9 @@ io.on('connection', function (socket) {
           activebpm = bpm;
       }
     timer = setTimeout(repeat, (60*1000)/(activebpm*4));
-    if (previousChord != chordArray) {
+    if ((previousChord != chordArray) && (chordArray != null)) {
       socket.emit('add_notes', chordArray);
-      console.log('chordArray');
+      console.log('change!');
       previousChord = chordArray;
     }
   })();
