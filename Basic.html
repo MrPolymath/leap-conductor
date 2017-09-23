@@ -36,11 +36,12 @@
 	window.onload = function () {
 		MIDI.loadPlugin({
 			soundfontUrl: "./soundfont/",
-			instrument:  "acoustic_grand_piano",
+			instrument:  "synth_drum",
 			onprogress: function(state, progress) {
 				console.log(state, progress);
 			},
 			onsuccess: function() {
+				MIDI.programChange(0, MIDI.GM.byName['synth_drum'].number);
 				console.log("success");
 				socket.on('add_notes', function (data) {
 				  // console.log(counter);
