@@ -19,6 +19,6 @@
   "dependencies": {
     "keypress": "^0.2.1",
     "socket.io": "^2.0.3",
-    "leapjs":"latest"
+    "leapjs":"https://github.com/MrPolymath/leapjs/tarball/master"
   }
 }
