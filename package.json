@@ -18,6 +18,7 @@
   "homepage": "https://github.com/MrPolymath/leap-conductor-socket#readme",
   "dependencies": {
     "keypress": "^0.2.1",
-    "socket.io": "^2.0.3"
+    "socket.io": "^2.0.3",
+    "leapjs":"https://github.com/MrPolymath/leapjs/tarball/master"
   }
 }
