@@ -1,14 +1,19 @@
-var instrument = 'acoustic_grand_piano'
+var config = require('./config.js');
+
 var volume = 127;
+var instrument = config.instrument;
+
+var chordToNotes = function (chord) {
+    return chords[chord];
+};
+
+if (instrument==null)
+{
+  instrument = 'acoustic_grand_piano';
+}
 
 var chords = {
-  'Cs' : [
-    {
-      'instrument': instrument,
-      'note': 44,
-      'volume': volume
-    },
-    {
+  'Cs' : [{
       'instrument': instrument,
       'note': 49,
       'volume': volume
@@ -17,7 +22,12 @@ var chords = {
       'instrument': instrument,
       'note': 52,
       'volume': volume
-    }],
+    },
+    {
+      'instrument': instrument,
+      'note': 44,
+      'volume': volume
+  }],
   'B' : [{
       'instrument': instrument,
       'note': 51,
@@ -63,10 +73,7 @@ var chords = {
       'note': 61,
       'volume': volume
   }]
-}
-
-var chordToNotes = function (chord) {
-  return chords[chord];
 };
+
 
 module.exports.chordToNotes = chordToNotes;
