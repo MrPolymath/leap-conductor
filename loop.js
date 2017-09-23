@@ -17,11 +17,6 @@ const loopLength = 8*4; // How many units is there in a loop
 var currentUnit = 0;
 var finalbpm = 0;
 
-// Socket code starts HERE
-io.on('connection', function (socket) {
-
-});
-
 var previousFrame = null;
 // var paused = false;
 //
@@ -96,20 +91,31 @@ function isPalmPull(currentFrame, previousFrame){
 
 controller.connect();
 
-function processUnit(){
-  if (currentUnit != 0) {
-      console.log(currentUnit+1);
-  } else {
-      console.log(currentUnit+1);
-  }
-  currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
-}
+// Socket code starts HERE
+io.on('connection', function (socket) {
+  // function processUnit(){
+  //   if (currentUnit != 0) {
+  //       console.log(currentUnit+1);
+  //   } else {
+  //       console.log(currentUnit+1);
+  //   }
+  //   socket.emit('send_tempo', currentUnit+1);
+  //   currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
+  // }
+  (function repeat() {
+    // processUnit();
+    if (currentUnit != 0) {
+        console.log(currentUnit+1);
+    } else {
+        console.log(currentUnit+1);
+    }
+    socket.emit('send_tempo', currentUnit+1);
+    currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
+    bpm = finalbpm ? finalbpm : bpm;
+    timer = setTimeout(repeat, (60*1000)/(bpm*4));
+  })();
+});
 
-(function repeat() {
-  processUnit();
-  bpm = finalbpm ? finalbpm : bpm;
-  timer = setTimeout(repeat, (60*1000)/(bpm*4));
-})();
 
 function handler (req, res) {
   fs.readFile(__dirname + 'Basic.html',
