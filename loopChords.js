@@ -150,7 +150,7 @@ io.on('connection', function (socket) {
 });
 
 function handler (req, res) {
-  fs.readFile(__dirname + 'Basic.html',
+  fs.readFile(__dirname + 'Chords.html',
   function (err, data) {
     if (err) {
       res.writeHead(500);
