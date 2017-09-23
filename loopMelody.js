@@ -1,17 +1,16 @@
 var app = require('http').createServer(handler).listen(80)
 var io = require('socket.io')(app);
 var fs = require('fs');
-var chords = require('./chords.js');
+var melody = require('./melody.js')
 
 //Config Variables
-const config = require('./config.js');
-const instrument =  config.instrument;
-const chordList = config.chordList;
+const notesList = ['E','A','B'];
+
 
 // THE LOGIC STARTS HERE
 var Leap = require('leapjs');
 var startTime = Date.now();
-var chordArray = [];
+var noteArray = [];
 var bpm = 60;
 var tiltSwitch = false;
 var notes = [];
@@ -22,7 +21,7 @@ const maxTempo = 160; // BPM
 const loopLength = 8*4; // How many units is there in a loop
 var currentUnit = 0;
 var finalbpm = 0;
-previousChord = null;
+previousNote = null;
 var previousFrame = null;
 var active = null;
 var timer = null;
@@ -38,8 +37,7 @@ var controller = Leap.loop(function (frame) {
         var velocity = hand.palmVelocity;
         var direction = hand.direction;
         var normalizedHeight = Math.round((getHandHeight(position)));
-        // console.log(heightToChord(normalizedHeight));
-        chordArray = chords.chordToNotes(heightToChord(normalizedHeight));
+        noteArray = melody.melodyToNotes(heightToNote(normalizedHeight));
         bpm = 60 + normalizedHeight;
         // console.log(normalizedHeight);
         // console.log(bpm);
@@ -91,7 +89,6 @@ function getHandTilt(frame){
     //>0.5 is right and <0.5 is left
     // console.log(frame.hands[0].arm.basis[0]);
     tilt = frame.hands[0].arm.basis[0][2];
-    // console.log(tilt);
     return tilt;
 }
 
@@ -102,19 +99,16 @@ function isPalmPull(currentFrame, previousFrame){
     return(translationVector[2] > 10);
 }
 
-function heightToChord(height){
+function heightToNote(height){
     var char;
-    if (height>=0 && height<23){
-        char = chordList[0]
+    if (height>=0 && height<30){
+        char = notesList[0]
     }
-    else if (height>=27 && height<47){
-        char = chordList[1]
+    else if (height>=36 && height<63){
+        char = notesList[1]
     }
-    else if (height>=52 && height<73){
-        char = chordList[2]
-    }
-    else if (height>=77){
-        char = chordList[3]
+    else if (height>=69 && height<100){
+        char = notesList[2]
     }
     return char;
 }
@@ -122,9 +116,7 @@ function heightToChord(height){
 io.on('connection', function (socket) {
   function processUnit(){
     if (currentUnit != 0) {
-        // console.log(currentUnit+1);
     } else {
-        // console.log(currentUnit+1);
     }
     currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
   }
@@ -138,19 +130,18 @@ io.on('connection', function (socket) {
           activebpm = bpm;
       }
     timer = setTimeout(repeat, (60*1000)/(activebpm*4));
-    if ((previousChord != chordArray) && (chordArray != null)) {
-      if (previousChord) {
-        socket.emit('remove_notes', previousChord);
+    if ((previousNote != noteArray) && (noteArray != null)) {
+      if (previousNote) {
+        socket.emit('remove_notes', previousNote)
       }
-      // socket.emit('add_notes', chordArray);
-      socket.emit('add_chords', chordArray);
-      previousChord = chordArray;
+      socket.emit('add_notes', noteArray);
+      previousNote = noteArray;
     }
   })();
 });
 
 function handler (req, res) {
-  fs.readFile(__dirname + 'Basic.html',
+  fs.readFile(__dirname + 'Melody.html',
   function (err, data) {
     if (err) {
       res.writeHead(500);
