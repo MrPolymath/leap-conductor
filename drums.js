@@ -1,6 +1,8 @@
 var app = require('http').createServer(handler).listen(80)
 var io = require('socket.io')(app);
 var fs = require('fs');
+const leapLibrary = require('./leapLibrary.js')
+
 
 // THE LOGIC STARTS HERE
 var Leap = require('leapjs');
@@ -10,10 +12,12 @@ var tiltSwitch = false;
 var musicInputNow = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
 const eightUnitSound = {instrument:'acoustic_grand_piano',note:'61',volume:'90'}
 const unitSound = {instrument:'acoustic_grand_piano',note:'44',volume:'90'}
+const specialSound = {instrument:'acoustic_grand_piano',note:'87',volume:'127'}
 var newElements = []
 var oldElements = []
 var newProve = true
 var oldProve = true
+var specialFrame
 // TEMPOS (intentionally have 100 diferent divisions)
 const minTempo = 60; // BPM
 const maxTempo = 160; // BPM
@@ -30,6 +34,11 @@ io.on('connection', function (socket) {
 
   var previousFrame = null;
   var controller = Leap.loop(function (frame) {
+      if(leapLibrary.getFist(frame)){
+        specialFrame = true
+      }else{
+        specialFrame = false
+      }
       if (frame.hands.length > 0) {
           active = true;
           var hand = frame.hands[0];
@@ -76,8 +85,6 @@ io.on('connection', function (socket) {
     return currentUnit-1
   }
 
-
-
   (function repeat() {
     var beatPosition = processUnit();
     if (active== false) {
@@ -87,9 +94,13 @@ io.on('connection', function (socket) {
     {
         activebpm = bpm;
     }
-    console.log(beatPosition);
     newElements = []
     oldElements =[]
+    if(specialFrame === true){
+      newElements.push(specialSound)
+    }else{
+      oldElements.push(specialSound)
+    }
 
     if(beatPosition === 0){
       newElements.push(eightUnitSound)
@@ -98,7 +109,6 @@ io.on('connection', function (socket) {
       newElements.push(unitSound)
       oldElements.push(eightUnitSound)
     }
-    console.log(oldElements, newElements);
     io.emit('remove_notes', oldElements)
     io.emit('add_notes', newElements)
     musicInputNow = [{instrument:'acoustic_grand_piano',note:'69',volume:'127'},{instrument:'acoustic_grand_piano',note:'87',volume:'120'}]
