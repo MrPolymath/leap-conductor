@@ -16,10 +16,12 @@
 	<!-- utils -->
 	<script src="js/util/dom_request_xhr.js" type="text/javascript"></script>
 	<script src="js/util/dom_request_script.js" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 </head>
 <body>
 <img src="./logo.png" width="400px"/>
 <script type="text/javascript">
+	var socket = io('http://localhost');
 	var keys_down = [];
 	var oldStreamReceived = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
 	var streamReceived = [{instrument:'acoustic_grand_piano',note:'55',volume:'127'},{instrument:'acoustic_grand_piano',note:'45',volume:'120'}]
@@ -74,8 +76,10 @@
 				console.log(state, progress);
 			},
 			onsuccess: function() {
-				MIDI.noteOn(0, '70', '127', 0);
-
+				socket.on('update_sound', function (data) {
+				  console.log(data);
+					// All the playing logic goes here
+				});
 				console.log("success");
 				setInterval(function(){
 					newElements = newElement(oldStreamReceived,streamReceived)
@@ -84,6 +88,20 @@
 						console.log("midiOn");
 						MIDI.noteOn(0, newElements[j].note, newElements[j].volume, 0);
 						MIDI.noteOn(0, '70', '127', 0);
+
+
+
+				window.onkeydown = function(ev){
+					if (keys_down[ev.keyCode] != true){
+						var note = keyCode_to_note(ev.keyCode);
+						if (note != -1){
+							keys_down[ev.keyCode] = true;
+							var delay = 0; // play one note every quarter second
+							var note = parseInt(note.substr(1))+21; // the MIDI note
+							var velocity = 127; // how hard the note hits
+							MIDI.setVolume(0, 127);
+							MIDI.noteOn(0, note, velocity, delay);
+						}
 					}
 					for (var j = 0; j < oldElements.length; j++){
 						MIDI.noteOff(0, oldElements[j].note, 0);
