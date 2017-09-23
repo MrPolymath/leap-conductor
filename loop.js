@@ -23,12 +23,15 @@ io.on('connection', function (socket) {
 });
 
 var previousFrame = null;
+var active = null;
+var timer = null;
 // var paused = false;
 //
 //Leap Code Starts here
 //
 var controller = Leap.loop(function (frame) {
     if (frame.hands.length > 0) {
+        active = true;
         var hand = frame.hands[0];
         var position = hand.palmPosition;
         var velocity = hand.palmVelocity;
@@ -39,23 +42,22 @@ var controller = Leap.loop(function (frame) {
         // console.log(bpm);
         //If the user is making a fist stop playing music
         if (getFist(frame) == 1) {
-            if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
-                clearInterval(intervalTimeout)
+            if (typeof timer !== 'undefined' && timer !== null) {
+                clearTimeout(timer)
             }
         }
         //If your hand is tilted to the right
         // if (getHandTilt(frame) < -0.5) {
         if (isPalmPull(frame,previousFrame)) {
             tiltSwitch = true;
-            tiltHeight = normalizedHeight;
         }
         if (tiltSwitch) {
-            if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
-                clearInterval(intervalTimeout)
-            }
             finalbpm = 60 + normalizedHeight;
             tiltSwitch = false;
         }
+    }
+    else{
+        active = false;
     }
     previousFrame = frame;
 });
@@ -107,8 +109,14 @@ function processUnit(){
 
 (function repeat() {
   processUnit();
-  bpm = finalbpm ? finalbpm : bpm;
-  timer = setTimeout(repeat, (60*1000)/(bpm*4));
+    if (active== false) {
+        activebpm = finalbpm;
+    }
+    else
+    {
+        activebpm = bpm;
+    }
+  timer = setTimeout(repeat, (60*1000)/(activebpm*4));
 })();
 
 function handler (req, res) {
