@@ -6,11 +6,11 @@ var fs = require('fs');
 var Leap = require('leapjs');
 var startTime = Date.now();
 
-var bpm = 60;
+var bpm = 100;
 var tiltSwitch = false;
 var musicInputNow = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
-const eightUnitSound = {instrument:'acoustic_grand_piano',note:'22',volume:'90'}
-const unitSound = {instrument:'acoustic_grand_piano',note:'30',volume:'90'}
+const eightUnitSound = {instrument:'acoustic_grand_piano',note:'61',volume:'90'}
+const unitSound = {instrument:'acoustic_grand_piano',note:'44',volume:'90'}
 var newElements = []
 var oldElements = []
 var newProve = true
@@ -19,94 +19,64 @@ var oldProve = true
 const minTempo = 60; // BPM
 const maxTempo = 160; // BPM
 const loopLength = 8*4; // How many units is there in a loop
-notes = new Array(loopLength);
+notes = new Array(loopLength+1);
+notes.fill([1])
 var currentUnit = 0;
 var finalbpm = 0;
 
 // Socket code starts HERE
 io.on('connection', function (socket) {
 
+  var previousFrame = null;
+  // var paused = false;
+  //
+  //Leap Code Starts here
+  // Leap motion bpm was here
+
+
+  //Leap Helper Functions
+
+
+
+  function processUnit(){
+    currentUnit = currentUnit == loopLength ? 1 : currentUnit+1;
+    return currentUnit-1
+  }
+
+
+
+  (function repeat() {
+    var beatPosition = processUnit();
+    console.log(beatPosition);
+    notes[beatPosition] = musicInputNow
+    newElements = []
+    oldElements =[]
+    if(beatPosition === 0){
+      console.log('first-one');
+      console.log(notes);
+      oldElements = oldElement(notes[loopLength-1], notes[beatPosition])
+      newElements = newElement(notes[loopLength-1], notes[beatPosition])
+    }
+    else{
+      console.log('second-one');
+      oldElements = oldElement(notes[beatPosition-1], notes[beatPosition])
+      newElements = newElement(notes[beatPosition-1], notes[beatPosition])
+    }
+    if(beatPosition === 0){
+      newElements.push(eightUnitSound)
+      oldElements.push(unitSound)
+    }else if(beatPosition === 4 || beatPosition===8 || beatPosition === 12 || beatPosition === 16 || beatPosition === 20 || beatPosition === 24 || beatPosition === 28){
+      newElements.push(unitSound)
+      oldElements.push(eightUnitSound)
+    }
+    // bpm = finalbpm ? finalbpm : bpm;
+    io.emit('remove_notes', oldElements)
+    io.emit('add_notes', newElements)
+    musicInputNow = [{instrument:'acoustic_grand_piano',note:'69',volume:'127'},{instrument:'acoustic_grand_piano',note:'87',volume:'120'}]
+    timer = setTimeout(repeat, (60*1000)/(bpm*4));
+  })();
+
 });
-
-var previousFrame = null;
-// var paused = false;
-//
-//Leap Code Starts here
-//
-var controller = Leap.loop(function (frame) {
-    if (frame.hands.length > 0) {
-        var hand = frame.hands[0];
-        var position = hand.palmPosition;
-        var velocity = hand.palmVelocity;
-        var direction = hand.direction;
-        var normalizedHeight = Math.round((getHandHeight(position)));
-        bpm = 60 + normalizedHeight;
-        // console.log(normalizedHeight);
-        // console.log(bpm);
-        //If the user is making a fist stop playing music
-        if (getFist(frame) == 1) {
-            if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
-                clearInterval(intervalTimeout)
-            }
-        }
-        //If your hand is tilted to the right
-        // if (getHandTilt(frame) < -0.5) {
-        if (isPalmPull(frame,previousFrame)) {
-            tiltSwitch = true;
-            tiltHeight = normalizedHeight;
-        }
-        if (tiltSwitch) {
-            if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
-                clearInterval(intervalTimeout)
-            }
-            finalbpm = 60 + normalizedHeight;
-            tiltSwitch = false;
-        }
-    }
-    previousFrame = frame;
-});
-
-//Leap Helper Functions
-
-function getHandHeight(palmPosition){
-    //Range is 100-450
-    // console.log(palmPosition);
-    height = (palmPosition[1]/400)*100;
-    if (height >100){
-        height=100;
-    }
-    else if (height<11){
-        height=0;
-    }
-    return height;
-}
-
-function getFist(frame){
-    return(frame.hands[0].grabStrength);
-}
-
-function getHandTilt(frame){
-    //>0.5 is right and <0.5 is left
-    // console.log(frame.hands[0].arm.basis[0]);
-    tilt = frame.hands[0].arm.basis[0][2];
-    // console.log(tilt);
-    return tilt;
-}
-
-function isPalmPull(currentFrame, previousFrame){
-    translationVector = currentFrame.translation(previousFrame);
-    // console.log(translationVector[2]);
-    // console.log(translationVector[2] > 10);
-    return(translationVector[2] > 10);
-}
-
-controller.connect();
-
-function processUnit(){
-  currentUnit = currentUnit + 1
-  currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
-  return currentUnit-1
-}
 
 function newElement(old, neww){
   console.log(old, neww);
@@ -128,6 +98,7 @@ function newElement(old, neww){
 }
 function oldElement(old, neww){
   var result = []
+  console.log(old, neww);
   old.forEach(function (a) {
     neww.forEach(function(b,i){
       console.log(JSON.stringify(a))
@@ -144,40 +115,15 @@ function oldElement(old, neww){
 return result
 }
 
-(function repeat() {
-  var beatPosition = processUnit();
-  notes[beatPosition] = musicInputNow
-  if(beatPosition === 0){
-    oldElements = oldElement(notes[beatPosition-1], notes[loopLength-1])
-    newElements = newElement(notes[beatPosition-1], notes[loopLength-1])
-  }
-  else{
-    oldElements = oldElement(notes[beatPosition-1], notes[beatPosition])
-    newElements = newElement(notes[beatPosition-1], notes[beatPosition])
-  }
-  if(beatPosition === 0){
-    newElements.push(eightUnitSound)
-    oldElements.push(unitSound)
-  }else if(beatPosition === 3 || beatPosition===7 || beatPosition === 11 || beatPosition === 15 || beatPosition === 19 || beatPosition === 23 || beatPosition === 27 || beatPosition === 31){
-    newElements.push(unitSound)
-    oldElements.push(eightUnitSound)
-  }
-  bpm = finalbpm ? finalbpm : bpm;
-  io.emit('remove_notes', oldElements)
-  io.emit('add_notes', newElements)
+  function handler (req, res) {
+    fs.readFile(__dirname + 'Basic.html',
+    function (err, data) {
+      if (err) {
+        res.writeHead(500);
+        return res.end('Error loading index.html');
+      }
 
-  timer = setTimeout(repeat, (60*1000)/(bpm*4));
-})();
-
-function handler (req, res) {
-  fs.readFile(__dirname + 'Basic.html',
-  function (err, data) {
-    if (err) {
-      res.writeHead(500);
-      return res.end('Error loading index.html');
-    }
-
-    res.writeHead(200);
-    res.end(data);
-  });
-}
+      res.writeHead(200);
+      res.end(data);
+    });
+  }
