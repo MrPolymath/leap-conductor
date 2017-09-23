@@ -15,6 +15,7 @@ const minTempo = 60; // BPM
 const maxTempo = 160; // BPM
 const loopLength = 8*4; // How many units is there in a loop
 var currentUnit = 0;
+var finalbpm = 0;
 
 // Socket code starts HERE
 io.on('connection', function (socket) {
@@ -32,10 +33,10 @@ var controller = Leap.loop(function (frame) {
         var position = hand.palmPosition;
         var velocity = hand.palmVelocity;
         var direction = hand.direction;
-        var normalizedHeight = (getHandHeight(position));
+        var normalizedHeight = Math.round((getHandHeight(position)));
         bpm = 60 + normalizedHeight;
         // console.log(normalizedHeight);
-        console.log(bpm);
+        // console.log(bpm);
         //If the user is making a fist stop playing music
         if (getFist(frame) == 1) {
             if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
@@ -53,7 +54,6 @@ var controller = Leap.loop(function (frame) {
                 clearInterval(intervalTimeout)
             }
             finalbpm = 60 + normalizedHeight;
-            intervalTimeout = restartInterval();
             tiltSwitch = false;
         }
     }
@@ -107,5 +107,19 @@ function processUnit(){
 
 (function repeat() {
   processUnit();
+  bpm = finalbpm ? finalbpm : bpm;
   timer = setTimeout(repeat, (60*1000)/(bpm*4));
 })();
+
+function handler (req, res) {
+  fs.readFile(__dirname + 'Basic.html',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading index.html');
+    }
+
+    res.writeHead(200);
+    res.end(data);
+  });
+}
