@@ -21,89 +21,84 @@
 <img src="./logo.png" width="400px"/>
 <script type="text/javascript">
 	var keys_down = [];
+	var oldStreamReceived = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
+	var streamReceived = [{instrument:'acoustic_grand_piano',note:'55',volume:'127'},{instrument:'acoustic_grand_piano',note:'45',volume:'120'}]
+	var tempo = streamReceived[0].tempo
+	var lastReceived = streamReceived
+	var newElements = []
+	var oldElements = []
+	var newProve = true
+	var oldProve = true
 
-	function keyCode_to_note( keyCode){
-			var note = -1;
-			//-----------------------------------
-			if(   keyCode==90 )  note= 0; // C 0
-			if(   keyCode==83 )  note= 1; // C#0
-			if(   keyCode==88 )  note= 2; // D 0
-			if(   keyCode==68 )  note= 3; // D#0
-			if(   keyCode==67 )  note= 4; // E 0
-			if(   keyCode==86 )  note= 5; // F 0
-			if(   keyCode==71 )  note= 6; // F#0
-			if(   keyCode==66 )  note= 7; // G 0
-			if(   keyCode==72 )  note= 8; // G#0
-			if(   keyCode==78 )  note= 9; // A 0
-			if(   keyCode==74 )  note=10; // A#0
-			if(   keyCode==77 )  note=11; // B 0
-			if(   keyCode==188 ) note=12; // C 0
-			//-----------------------------------
-			if(   keyCode==81 )  note=12; // C 1
-			if(   keyCode==50 )  note=13; // C#1
-			if(   keyCode==87 )  note=14; // D 1
-			if(   keyCode==51 )  note=15; // D#1
-			if(   keyCode==69 )  note=16; // E 1
-			if(   keyCode==82 )  note=17; // F 1
-			if(   keyCode==53 )  note=18; // F#1
-			if(   keyCode==84 )  note=19; // G 1
-			if(   keyCode==54 )  note=20; // G#1
-			if(   keyCode==89 )  note=21; // A 1
-			if(   keyCode==55 )  note=22; // A#1
-			if(   keyCode==85 )  note=23; // B 1
-			//-----------------------------------
-			if(   keyCode==73 )  note=24; // C 2
-			if(   keyCode==57 )  note=25; // C#2
-			if(   keyCode==79 )  note=26; // D 2
-			if(   keyCode==48 )  note=27; // D#2
-			if(   keyCode==80 )  note=28; // E 2
-			if(   keyCode==219 ) note=29; // F 2
-			if(   keyCode==187 ) note=30; // F#2
-			if(   keyCode==221 ) note=31; // G 2
-			//-----------------------------------
-			if( note == -1 ) return -1;
-			return ("_" + (note + 2*12));
-		}
 
+	function newElement(old, neww){
+		console.log(old, neww);
+		var result = [];
+		neww.forEach(function (a) {
+			old.forEach(function(b,i){
+				console.log(JSON.stringify(a))
+				console.log(JSON.stringify(b));
+				if(JSON.stringify(a) === JSON.stringify(b)){ newProve = false}
+				if(i == old.length-1){
+					if(newProve === true){
+						console.log('Sha de comencar un nou to');
+						result.push(a)}
+					else{newProve = true; console.log('No sinicialitza');}
+				}
+			})
+		});
+		return result
+	}
+	function oldElement(old, neww){
+		var result = []
+		old.forEach(function (a) {
+			neww.forEach(function(b,i){
+				console.log(JSON.stringify(a))
+				console.log(JSON.stringify(b));
+				if(JSON.stringify(a) === JSON.stringify(b)){ oldProve = false}
+				if(i == neww.length-1){
+					if(oldProve === true){
+						console.log('Sha de tancar el to');
+						result.push(a)}
+					else{oldProve = true; console.log('No sha de tancar');}
+				}
+		});
+	})
+	return result
+}
 	window.onload = function () {
 		MIDI.loadPlugin({
 			soundfontUrl: "./soundfont/",
-			instrument: "acoustic_grand_piano",
+			instrument:  "acoustic_grand_piano",
 			onprogress: function(state, progress) {
 				console.log(state, progress);
 			},
 			onsuccess: function() {
-				window.onkeydown = function(ev){
-					if (keys_down[ev.keyCode] != true){
-						var note = keyCode_to_note(ev.keyCode);
-						if (note != -1){
-							keys_down[ev.keyCode] = true;
-							var delay = 0; // play one note every quarter second
-							var note = parseInt(note.substr(1))+21; // the MIDI note
-							var velocity = 127; // how hard the note hits
-							MIDI.setVolume(0, 127);
-							MIDI.noteOn(0, note, velocity, delay);
-						}
+				MIDI.noteOn(0, '70', '127', 0);
+
+				console.log("success");
+				setInterval(function(){
+					newElements = newElement(oldStreamReceived,streamReceived)
+					oldElements = oldElement(oldStreamReceived,streamReceived)
+					for (var j = 0; j < newElements.length; j++){
+						console.log("midiOn");
+						MIDI.noteOn(0, newElements[j].note, newElements[j].volume, 0);
+						MIDI.noteOn(0, '70', '127', 0);
 					}
-				}
-				window.onkeyup = function(ev){
-					if (keys_down[ev.keyCode] == true){
-						var note = keyCode_to_note(ev.keyCode);
-						keys_down[ev.keyCode] = false;
-						var delay = 0; // play one note every quarter second
-						var note = parseInt(note.substr(1))+21;
-						var velocity = 127;// how hard the note hits
-						MIDI.setVolume(0, 127);
-						MIDI.noteOff(0, note, delay + 0.08);
+					for (var j = 0; j < oldElements.length; j++){
+						MIDI.noteOff(0, oldElements[j].note, 0);
 					}
-				}
+					oldStreamReceived = streamReceived
+					streamReceived = [{instrument:'acoustic_grand_piano',note:'37',volume:'127'}]
+					newElements = []
+					oldElements = []
+					newProve = true
+					oldProve = true
+
+				}, 1000)
 			}
 		});
 	};
-
-
-
-
 
 </script>
 </body>
