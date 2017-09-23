@@ -7,5 +7,5 @@ const instrument = instruments[4];
 const chordList = ['Cs','B','E','A'];
 
 
-// module.exports.instrument = instrument;
-// module.exports.chordList = chordList;
+module.exports.instrument = instrument;
+module.exports.chordList = chordList;
