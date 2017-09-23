@@ -68,12 +68,6 @@
 		}
 
 	window.onload = function () {
-
-		socket.on('update_sound', function (data) {
-		  console.log(data);
-			// All the playing logic goes here
-		});
-
 		MIDI.loadPlugin({
 			soundfontUrl: "./soundfont/",
 			instrument: "acoustic_grand_piano",
@@ -81,6 +75,11 @@
 				console.log(state, progress);
 			},
 			onsuccess: function() {
+				socket.on('update_sound', function (data) {
+				  console.log(data);
+					// All the playing logic goes here
+				});
+				
 				window.onkeydown = function(ev){
 					if (keys_down[ev.keyCode] != true){
 						var note = keyCode_to_note(ev.keyCode);
