@@ -91,26 +91,20 @@ function isPalmPull(currentFrame, previousFrame){
 
 controller.connect();
 
+function processUnit(){
+  if (currentUnit != 0) {
+      console.log(currentUnit+1);
+  } else {
+      console.log(currentUnit+1);
+  }
+  socket.emit('send_tempo', currentUnit);
+  currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
+}
+
 // Socket code starts HERE
 io.on('connection', function (socket) {
-  // function processUnit(){
-  //   if (currentUnit != 0) {
-  //       console.log(currentUnit+1);
-  //   } else {
-  //       console.log(currentUnit+1);
-  //   }
-  //   socket.emit('send_tempo', currentUnit+1);
-  //   currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
-  // }
   (function repeat() {
-    // processUnit();
-    if (currentUnit != 0) {
-        console.log(currentUnit+1);
-    } else {
-        console.log(currentUnit+1);
-    }
-    socket.emit('send_tempo', currentUnit+1);
-    currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
+    processUnit();
     bpm = finalbpm ? finalbpm : bpm;
     timer = setTimeout(repeat, (60*1000)/(bpm*4));
   })();
