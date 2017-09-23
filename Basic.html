@@ -43,6 +43,7 @@
 				console.log(state, progress);
 			},
 			onsuccess: function() {
+
 				MIDI.programChange(0, MIDI.GM.byName[instrumentName].number);
 				console.log("success");
 				// socket.on('add_notes', function (data) {
