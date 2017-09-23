@@ -1,0 +1,23 @@
+{
+  "name": "leap-conductor-socket",
+  "version": "1.0.0",
+  "description": "Backend first approach",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrPolymath/leap-conductor.git"
+  },
+  "author": "Daniel Carmona Serrat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrPolymath/leap-conductor-socket/issues"
+  },
+  "homepage": "https://github.com/MrPolymath/leap-conductor-socket#readme",
+  "dependencies": {
+    "keypress": "^0.2.1",
+    "socket.io": "^2.0.3"
+  }
+}
