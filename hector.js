@@ -155,10 +155,10 @@ return result
     oldElements = oldElement(notes[beatPosition-1], notes[beatPosition])
     newElements = newElement(notes[beatPosition-1], notes[beatPosition])
   }
-  if(beatPosition === 0 || beatPosition  === 7 || beatPosition === 15 || beatPosition ===23 || beatPosition === 31){
+  if(beatPosition === 0){
     newElements.push(eightUnitSound)
     oldElements.push(unitSound)
-  }else{
+  }else if(beatPosition === 3 || beatPosition===7 || beatPosition === 11 || beatPosition === 15 || beatPosition === 19 || beatPosition === 23 || beatPosition === 27 || beatPosition === 31){
     newElements.push(unitSound)
     oldElements.push(eightUnitSound)
   }
