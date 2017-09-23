@@ -1,14 +1,8 @@
-var instrument = 'acoustic_grand_piano'
+var instrument = 'string_ensemble_1'
 var volume = 127;
 
 var chords = {
-  'Cs' : [
-    {
-      'instrument': instrument,
-      'note': 44,
-      'volume': volume
-    },
-    {
+  'Cs' : [{
       'instrument': instrument,
       'note': 49,
       'volume': volume
@@ -17,7 +11,12 @@ var chords = {
       'instrument': instrument,
       'note': 52,
       'volume': volume
-    }],
+    },
+    {
+      'instrument': instrument,
+      'note': 44,
+      'volume': volume
+  }],
   'B' : [{
       'instrument': instrument,
       'note': 51,

@@ -31,16 +31,17 @@
 	// var newProve = true
 	// var oldProve = true
 	var counter = 0;
-
+	var instrumentName = 'string_ensemble_1'
 
 	window.onload = function () {
 		MIDI.loadPlugin({
 			soundfontUrl: "./soundfont/",
-			instrument:  "acoustic_grand_piano",
+			instrument:  instrumentName,
 			onprogress: function(state, progress) {
 				console.log(state, progress);
 			},
 			onsuccess: function() {
+				MIDI.programChange(0, MIDI.GM.byName[instrumentName].number);
 				console.log("success");
 				socket.on('add_notes', function (data) {
 				  // console.log(counter);
@@ -51,6 +52,13 @@
 						// MIDI.noteOn(0, '70', '127', 0);
 					}
 				});
+				// socket.on('add_chords', function (data) {
+				// 	if (data.length) {
+				// 		var inputChords = [data[0].note, data[1].note, data[2].note];
+				// 		// console.log(inputChords);
+				// 		MIDI.chordOn(0, inputChords, data[0].volume, 0);
+				// 	}
+				// });
 				socket.on('remove_notes', function(data){
 					for (var j = 0; j < data.length; j++){
 						MIDI.noteOff(0, data[j].note, 0);
