@@ -21,11 +21,6 @@ const loopLength = 8*4; // How many units is there in a loop
 var currentUnit = 0;
 var finalbpm = 0;
 
-// Socket code starts HERE
-io.on('connection', function (socket) {
-
-});
-
 var previousFrame = null;
 var active = null;
 var timer = null;
@@ -128,20 +123,23 @@ function processUnit(){
   } else {
       console.log(currentUnit+1);
   }
+  socket.emit('send_tempo', currentUnit);
   currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
 }
 
-(function repeat() {
-  processUnit();
-    if (active== false) {
-        activebpm = finalbpm;
-    }
-    else
-    {
-        activebpm = bpm;
-    }
-  timer = setTimeout(repeat, (60*1000)/(activebpm*4));
-})();
+io.on('connection', function (socket) {
+  (function repeat() {
+    processUnit();
+      if (active== false) {
+          activebpm = finalbpm;
+      }
+      else
+      {
+          activebpm = bpm;
+      }
+    timer = setTimeout(repeat, (60*1000)/(activebpm*4));
+  })();
+});
 
 function handler (req, res) {
   fs.readFile(__dirname + 'Basic.html',
