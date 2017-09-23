@@ -1,16 +1,16 @@
 var app = require('http').createServer(handler).listen(80)
 var io = require('socket.io')(app);
 var fs = require('fs');
-var chords2 = require('./chords.js')
+var chords = require('./chords.js')
 
 //Config Variables
-const chords = ['Cs','B','E','A'];
+const chordList = ['Cs','B','E','A'];
 
 
 // THE LOGIC STARTS HERE
 var Leap = require('leapjs');
 var startTime = Date.now();
-
+var chordArray = [];
 var bpm = 60;
 var tiltSwitch = false;
 var notes = [];
@@ -38,6 +38,7 @@ var controller = Leap.loop(function (frame) {
         var direction = hand.direction;
         var normalizedHeight = Math.round((getHandHeight(position)));
         console.log(heightToChord(normalizedHeight));
+        chordArray = chords.chordToNotes(heightToChord(normalizedHeight));
         bpm = 60 + normalizedHeight;
         // console.log(normalizedHeight);
         // console.log(bpm);
@@ -103,16 +104,16 @@ function isPalmPull(currentFrame, previousFrame){
 function heightToChord(height){
     var char;
     if (height>=0 && height<25){
-        char = chords[0]
+        char = chordList[0]
     }
     else if (height>=25 && height<50){
-        char = chords[1]
+        char = chordList[1]
     }
     else if (height>=50 && height<75){
-        char = chords[2]
+        char = chordList[2]
     }
     else if (height>=75){
-        char = chords[3]
+        char = chordList[3]
     }
     return char;
 }
@@ -124,7 +125,7 @@ io.on('connection', function (socket) {
     } else {
         console.log(currentUnit+1);
     }
-    socket.emit('send_tempo', currentUnit);
+    socket.emit('add_notes', chordArray);
     currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
   }
   (function repeat() {
