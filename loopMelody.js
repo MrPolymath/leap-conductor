@@ -4,7 +4,7 @@ var fs = require('fs');
 var melody = require('./melody.js')
 
 //Config Variables
-const notesList = ['E','A','B'];
+const notesList = ['E','Gs','B','Cs'];
 
 
 // THE LOGIC STARTS HERE
@@ -101,14 +101,17 @@ function isPalmPull(currentFrame, previousFrame){
 
 function heightToNote(height){
     var char;
-    if (height>=0 && height<30){
+    if (height>=0 && height<22){
         char = notesList[0]
     }
-    else if (height>=36 && height<63){
+    else if (height>=28 && height<48){
         char = notesList[1]
     }
-    else if (height>=69 && height<100){
+    else if (height>=52 && height<73){
         char = notesList[2]
+    }
+    else if (height>=78 && height<100){
+        char = notesList[3]
     }
     return char;
 }
