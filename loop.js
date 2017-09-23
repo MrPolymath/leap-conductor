@@ -1,6 +1,7 @@
 var app = require('http').createServer(handler).listen(80)
 var io = require('socket.io')(app);
 var fs = require('fs');
+var chords2 = require('./chords.js')
 
 //Config Variables
 const chords = ['Cs','B','E','A'];
