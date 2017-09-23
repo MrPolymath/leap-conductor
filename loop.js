@@ -8,44 +8,46 @@ var tiltSwitch = false;
 //
 //Leap Code Starts here
 //
-var controller = Leap.loop(function(frame){
-    if(frame.hands.length > 0)
-    {
-        var hand = frame.hands[0];
-        var position = hand.palmPosition;
-        var velocity = hand.palmVelocity;
-        var direction = hand.direction;
-        var normalizedHeight = (getHandHeight(position));
-        console.log(normalizedHeight);
-        //If the user is making a fist stop playing music
-        if (getFist(frame)==1){
-            if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null){
-                clearInterval(intervalTimeout)
-            }
-        }
-        //If your hand is tilted to the right
-        if (getHandTilt(frame)<-0.5){
-            tiltSwitch=true;
-            tiltHeight = normalizedHeight;
-        }
-        else{
-            if (getHandTilt > 0.3)
-            {
-                console.log(normalizedHeight);
-            }
-            if (tiltSwitch)
-            {
-                if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null){
+try {
+    var controller = Leap.loop(function (frame) {
+        if (frame.hands.length > 0) {
+            var hand = frame.hands[0];
+            var position = hand.palmPosition;
+            var velocity = hand.palmVelocity;
+            var direction = hand.direction;
+            var normalizedHeight = (getHandHeight(position));
+            console.log(normalizedHeight);
+            //If the user is making a fist stop playing music
+            if (getFist(frame) == 1) {
+                if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
                     clearInterval(intervalTimeout)
                 }
-                bpm = 60+normalizedHeight;
-                intervalTimeout = restartInterval();
-                tiltSwitch=false;
+            }
+            //If your hand is tilted to the right
+            if (getHandTilt(frame) < -0.5) {
+                tiltSwitch = true;
+                tiltHeight = normalizedHeight;
+            }
+            else {
+                if (getHandTilt > 0.3) {
+                    console.log(normalizedHeight);
+                }
+                if (tiltSwitch) {
+                    if (typeof intervalTimeout !== 'undefined' && intervalTimeout !== null) {
+                        clearInterval(intervalTimeout)
+                    }
+                    bpm = 60 + normalizedHeight;
+                    intervalTimeout = restartInterval();
+                    tiltSwitch = false;
+                }
             }
         }
-    }
-});
-
+    });
+}
+catch(e)
+{
+    //
+}
 //Leap Helper Functions
 
 function getHandHeight(palmPosition){
