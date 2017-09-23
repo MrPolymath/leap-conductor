@@ -103,16 +103,16 @@ function isPalmPull(currentFrame, previousFrame){
 
 function heightToChord(height){
     var char;
-    if (height>=0 && height<25){
+    if (height>=0 && height<23){
         char = chordList[0]
     }
-    else if (height>=25 && height<50){
+    else if (height>=27 && height<47){
         char = chordList[1]
     }
-    else if (height>=50 && height<75){
+    else if (height>=52 && height<73){
         char = chordList[2]
     }
-    else if (height>=75){
+    else if (height>=77){
         char = chordList[3]
     }
     return char;
