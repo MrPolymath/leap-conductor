@@ -21,7 +21,7 @@ const maxTempo = 160; // BPM
 const loopLength = 8*4; // How many units is there in a loop
 var currentUnit = 0;
 var finalbpm = 0;
-
+previousChord = null;
 var previousFrame = null;
 var active = null;
 var timer = null;
@@ -37,7 +37,7 @@ var controller = Leap.loop(function (frame) {
         var velocity = hand.palmVelocity;
         var direction = hand.direction;
         var normalizedHeight = Math.round((getHandHeight(position)));
-        console.log(heightToChord(normalizedHeight));
+        // console.log(heightToChord(normalizedHeight));
         chordArray = chords.chordToNotes(heightToChord(normalizedHeight));
         bpm = 60 + normalizedHeight;
         // console.log(normalizedHeight);
@@ -121,11 +121,10 @@ function heightToChord(height){
 io.on('connection', function (socket) {
   function processUnit(){
     if (currentUnit != 0) {
-        console.log(currentUnit+1);
+        // console.log(currentUnit+1);
     } else {
-        console.log(currentUnit+1);
+        // console.log(currentUnit+1);
     }
-    socket.emit('add_notes', chordArray);
     currentUnit = currentUnit == loopLength-1 ? 0 : currentUnit+1;
   }
   (function repeat() {
@@ -138,6 +137,11 @@ io.on('connection', function (socket) {
           activebpm = bpm;
       }
     timer = setTimeout(repeat, (60*1000)/(activebpm*4));
+    if (previousChord != chordArray) {
+      socket.emit('add_notes', chordArray);
+      console.log('chordArray');
+      previousChord = chordArray;
+    }
   })();
 });
 
