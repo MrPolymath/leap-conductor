@@ -23,50 +23,50 @@
 <script type="text/javascript">
 
 	var socket = io('http://localhost');
-	var keys_down = [];
-	var oldStreamReceived = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
-	var streamReceived = [{instrument:'acoustic_grand_piano',note:'55',volume:'127'},{instrument:'acoustic_grand_piano',note:'45',volume:'120'}]
-	var newElements = []
-	var oldElements = []
-	var newProve = true
-	var oldProve = true
+	// var keys_down = [];
+	// var oldStreamReceived = [{instrument:'acoustic_grand_piano',note:'59',volume:'127'},{instrument:'acoustic_grand_piano',note:'79',volume:'120'}]
+	// var streamReceived = [{instrument:'acoustic_grand_piano',note:'55',volume:'127'},{instrument:'acoustic_grand_piano',note:'45',volume:'120'}]
+	// var newElements = []
+	// var oldElements = []
+	// var newProve = true
+	// var oldProve = true
 
 
-	function newElement(old, neww){
-		console.log(old, neww);
-		var result = [];
-		neww.forEach(function (a) {
-			old.forEach(function(b,i){
-				console.log(JSON.stringify(a))
-				console.log(JSON.stringify(b));
-				if(JSON.stringify(a) === JSON.stringify(b)){ newProve = false}
-				if(i == old.length-1){
-					if(newProve === true){
-						console.log('Sha de comencar un nou to');
-						result.push(a)}
-					else{newProve = true; console.log('No sinicialitza');}
-				}
-			})
-		});
-		return result
-	}
-	function oldElement(old, neww){
-		var result = []
-		old.forEach(function (a) {
-			neww.forEach(function(b,i){
-				console.log(JSON.stringify(a))
-				console.log(JSON.stringify(b));
-				if(JSON.stringify(a) === JSON.stringify(b)){ oldProve = false}
-				if(i == neww.length-1){
-					if(oldProve === true){
-						console.log('Sha de tancar el to');
-						result.push(a)}
-					else{oldProve = true; console.log('No sha de tancar');}
-				}
-		});
-	})
-	return result
-}
+// 	function newElement(old, neww){
+// 		console.log(old, neww);
+// 		var result = [];
+// 		neww.forEach(function (a) {
+// 			old.forEach(function(b,i){
+// 				console.log(JSON.stringify(a))
+// 				console.log(JSON.stringify(b));
+// 				if(JSON.stringify(a) === JSON.stringify(b)){ newProve = false}
+// 				if(i == old.length-1){
+// 					if(newProve === true){
+// 						console.log('Sha de comencar un nou to');
+// 						result.push(a)}
+// 					else{newProve = true; console.log('No sinicialitza');}
+// 				}
+// 			})
+// 		});
+// 		return result
+// 	}
+// 	function oldElement(old, neww){
+// 		var result = []
+// 		old.forEach(function (a) {
+// 			neww.forEach(function(b,i){
+// 				console.log(JSON.stringify(a))
+// 				console.log(JSON.stringify(b));
+// 				if(JSON.stringify(a) === JSON.stringify(b)){ oldProve = false}
+// 				if(i == neww.length-1){
+// 					if(oldProve === true){
+// 						console.log('Sha de tancar el to');
+// 						result.push(a)}
+// 					else{oldProve = true; console.log('No sha de tancar');}
+// 				}
+// 		});
+// 	})
+// 	return result
+// }
 	window.onload = function () {
 		MIDI.loadPlugin({
 			soundfontUrl: "./soundfont/",
@@ -75,28 +75,30 @@
 				console.log(state, progress);
 			},
 			onsuccess: function() {
-				socket.on('update_sound', function (data) {
-				  console.log(data);
-					// All the playing logic goes here
-				});
 				console.log("success");
 				setInterval(function(){
-					newElements = newElement(oldStreamReceived,streamReceived)
-					oldElements = oldElement(oldStreamReceived,streamReceived)
-					for (var j = 0; j < newElements.length; j++){
-						console.log("midiOn");
-						MIDI.noteOn(0, newElements[j].note, newElements[j].volume, 0);
-						MIDI.noteOn(0, '70', '127', 0);
-					}
-					for (var j = 0; j < oldElements.length; j++){
-						MIDI.noteOff(0, oldElements[j].note, 0);
-					}
-					oldStreamReceived = streamReceived
-					streamReceived = [{instrument:'acoustic_grand_piano',note:'37',volume:'127'}]
-					newElements = []
-					oldElements = []
-					newProve = true
-					oldProve = true
+					socket.on('add_notes', function (data) {
+					  console.log(data);
+						for (var j = 0; j < data.length; j++){
+							console.log("midiOn");
+							MIDI.noteOn(0, data[j].note, data[j].volume, 0);
+							MIDI.noteOn(0, '70', '127', 0);
+						}
+					});
+					socket.on('remove_notes', function(data){
+						for (var j = 0; j < data.length; j++){
+							MIDI.noteOff(0, data[j].note, 0);
+						}
+					})
+					// newElements = newElement(oldStreamReceived,streamReceived)
+					// oldElements = oldElement(oldStreamReceived,streamReceived)
+					//
+					// oldStreamReceived = streamReceived
+					// streamReceived = [{instrument:'acoustic_grand_piano',note:'37',volume:'127'}]
+					// newElements = []
+					// oldElements = []
+					// newProve = true
+					// oldProve = true
 
 				}, 1000)
 			}
