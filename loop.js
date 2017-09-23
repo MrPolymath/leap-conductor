@@ -2,6 +2,10 @@ var app = require('http').createServer(handler).listen(80)
 var io = require('socket.io')(app);
 var fs = require('fs');
 
+//Config Variables
+const chords = ['Cs','B','E','A'];
+
+
 // THE LOGIC STARTS HERE
 var Leap = require('leapjs');
 var startTime = Date.now();
@@ -37,6 +41,7 @@ var controller = Leap.loop(function (frame) {
         var velocity = hand.palmVelocity;
         var direction = hand.direction;
         var normalizedHeight = Math.round((getHandHeight(position)));
+        console.log(heightToChord(normalizedHeight));
         bpm = 60 + normalizedHeight;
         // console.log(normalizedHeight);
         // console.log(bpm);
@@ -61,6 +66,9 @@ var controller = Leap.loop(function (frame) {
     }
     previousFrame = frame;
 });
+
+controller.connect();
+
 
 //Leap Helper Functions
 
@@ -96,8 +104,24 @@ function isPalmPull(currentFrame, previousFrame){
     return(translationVector[2] > 10);
 }
 
-controller.connect();
+function heightToChord(height){
+    var char;
+    if (height>=0 && height<25){
+        char = chords[0]
+    }
+    else if (height>=25 && height<50){
+        char = chords[1]
+    }
+    else if (height>=50 && height<75){
+        char = chords[2]
+    }
+    else if (height>=75){
+        char = chords[3]
+    }
+    return char;
+}
 
+//Time Functions Below
 function processUnit(){
   if (currentUnit != 0) {
       console.log(currentUnit+1);
