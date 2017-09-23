@@ -1,11 +1,12 @@
 var app = require('http').createServer(handler).listen(80)
 var io = require('socket.io')(app);
 var fs = require('fs');
-var chords = require('./chords.js')
+var chords = require('./chords.js');
 
 //Config Variables
-const chordList = ['Cs','B','E','A'];
-
+const config = require('./config.js');
+const instrument =  config.instrument;
+const chordList = config.chordList;
 
 // THE LOGIC STARTS HERE
 var Leap = require('leapjs');
