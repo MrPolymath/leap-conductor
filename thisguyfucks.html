@@ -82,14 +82,48 @@ See additional libraries, guides, and examples at:
                     handString += "Type: " + hand.type + " hand" + "<br />";
                     handString += "Direction: " + vectorToString(hand.direction, 2) + "<br />";
                     handString += "Palm position: " + vectorToString(hand.palmPosition) + " mm<br />";
-                    height = getHandHeight(hand.palmPosition);
 
+                    //PERSONAL CODE
+                    height = getHandHeight(hand.palmPosition);
                     var audio = document.getElementById("audiotrack");
-                    saveBeat = getFist(frame);
+
+                    playbackRate = (height/50);
+                    if (isLeftHand(frame)==false){
+                        saveBeat = getFist(frame);
+                        point = isPoint(frame);
 //                    console.log(saveBeat);
-                    if (saveBeat){
-                        audio.playbackRate = (height/50)+0.25;
+                        if (point){
+                            var effect = document.getElementById('effect1');
+//                        effect.playbackRate = playbackRate;
+                            effect.play();
+                        }
+                        else if (saveBeat){
+                            audio.playbackRate= playbackRate;
+                        }
                     }
+                    else{
+                        var leftEffect1 = document.getElementById('leftEffect1');
+                        var leftEffect2 = document.getElementById('leftEffect2');
+                        point = isPoint(frame);
+                        if (getFist(frame)){
+                            leftEffect1.play();
+                        }
+                        if (point){
+//                            audio.playbackRate = playbackRate;
+                            leftEffect2.playbackRate = Math.pow(playbackRate,1.5)+0.25;
+//                            leftEffect2.playbackRate = playbackRate;
+                            leftEffect2.play();
+
+                        }
+                        else{
+                            leftEffect2.pause();
+                        }
+
+//                        console.log("Left hand here");
+                    }
+
+
+                    // END PERSONAL CODE
 
                     // Hand motion factors
                     if (previousFrame && previousFrame.valid) {
@@ -217,7 +251,13 @@ See additional libraries, guides, and examples at:
             // Store frame for motion functions
             previousFrame = frame;
         });
-        //Custom Leap Functions
+        //Custom Leap Functions,
+        //Leap Library goes here
+
+        function getFist(frame){
+            return(frame.hands[0].grabStrength==1 && frame.hands[0].thumb.extended  ==false && frame.hands[0].indexFinger.extended ==false && frame.hands[0].middleFinger.extended==false && frame.hands[0].ringFinger.extended == false && frame.hands[0].pinky.extended == false);
+        }
+
         function getHandHeight(palmPosition){
             //Range is 100-450
             // console.log(palmPosition);
@@ -231,8 +271,23 @@ See additional libraries, guides, and examples at:
             return height;
         }
 
-        function getFist(frame){
-            return(frame.hands[0].grabStrength);
+        function isPalmPull(currentFrame, previousFrame){
+            translationVector = currentFrame.translation(previousFrame);
+            // console.log(translationVector[2]);
+            // console.log(translationVector[2] > 10);
+            return(translationVector[2] > 10);
+        }
+
+        function isPoint(frame){
+            var hand = frame.hands[0];
+            var thumb = hand.thumb;
+            var indexFinger = hand.indexFinger;
+            var middleFinger = hand.middleFinger;
+            return(thumb.extended && indexFinger.extended && middleFinger.extended==false && hand.ringFinger.extended == false && hand.pinky.extended == false);
+        }
+
+        function isLeftHand(frame){
+            return (frame.hands[0].type=='left');
         }
 
         //END Custom Leap Functions
@@ -274,10 +329,27 @@ See additional libraries, guides, and examples at:
 
     <audio controls loop autoplay id="audiotrack">
         <!--<source src="./assets/lnd.wav" type="audio/wav">-->
-        <!--<source src="./assets/sandstorm.mp3" type="audio/mp3">-->
-        <source src='./assets/standarddrum.mp3' type="audio/mp3">
+        <source src="./assets/sandstorm.mp3" type="audio/mp3">
+        <!--<source src='./assets/standarddrum.mp3' type="audio/mp3">-->
         Your browser does not support the audio element.
     </audio>
+    <script>
+        var audio = document.getElementById("audiotrack");
+        audio.volume = 0.5;
+    </script>
+    <audio controls id="effect1">
+        <source src='./assets/this-guy-fucks-shortened.mp3' type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <audio controls id="leftEffect1">
+        <source src='./assets/DJ-Scratch-3.mp3' type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+    <audio controls loop id="leftEffect2">
+        <source src='./assets/MHacks.mp3' type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
 
     <h3>Frame data:</h3>
     <div id="frameData"></div>
