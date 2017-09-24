@@ -39,4 +39,4 @@ module.exports.getFist = getFist;
 module.exports.getHandHeight = getHandHeight;
 module.exports.isPalmPull = isPalmPull;
 module.exports.isPoint = isPoint;
-module.exports.isLeftHand = isLeftHand();
+module.exports.isLeftHand = isLeftHand;
