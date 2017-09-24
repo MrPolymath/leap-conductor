@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="90088311-726f-4355-b945-c1a4baa88033" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/drums.js" afterPath="$PROJECT_DIR$/drums.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/leapLibrary.js" afterPath="$PROJECT_DIR$/leapLibrary.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -51,10 +52,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="lnd.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="lnd.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lnd.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
+            <state relative-caret-position="-688">
               <caret line="88" column="62" lean-forward="true" selection-start-line="88" selection-start-column="62" selection-end-line="88" selection-end-column="62" />
               <folding>
                 <marker date="1506216504067" expanded="true" signature="1795:1802" ph="µ" />
@@ -78,7 +79,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="leapLibrary.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="leapLibrary.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/leapLibrary.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
@@ -114,6 +115,7 @@
       <find>id</find>
       <find>console</find>
       <find>getFist</find>
+      <find>sa</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -127,8 +129,8 @@
         <option value="$PROJECT_DIR$/deletemelater.html" />
         <option value="$PROJECT_DIR$/loop.js" />
         <option value="$PROJECT_DIR$/lnd.js" />
-        <option value="$PROJECT_DIR$/leapLibrary.js" />
         <option value="$PROJECT_DIR$/lnd.html" />
+        <option value="$PROJECT_DIR$/leapLibrary.js" />
       </list>
     </option>
   </component>
@@ -294,7 +296,7 @@
       <workItem from="1506166638619" duration="5092000" />
       <workItem from="1506172829937" duration="6668000" />
       <workItem from="1506205241821" duration="7168000" />
-      <workItem from="1506216483249" duration="837000" />
+      <workItem from="1506216483249" duration="998000" />
     </task>
     <task id="LOCAL-00001" summary="added in some leap integration">
       <created>1506170525127</created>
@@ -307,11 +309,11 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19765000" />
+    <option name="totallyTimeSpent" value="19926000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="24" width="1920" height="1056" extended-state="7" />
-    <editor active="false" />
+    <frame x="0" y="24" width="1920" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24986821" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -514,17 +516,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/leapLibrary.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lnd.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
+        <state relative-caret-position="-688">
           <caret line="88" column="62" lean-forward="true" selection-start-line="88" selection-start-column="62" selection-end-line="88" selection-end-column="62" />
           <folding>
             <marker date="1506216504067" expanded="true" signature="1795:1802" ph="µ" />
@@ -532,6 +526,14 @@
             <marker date="1506216504067" expanded="true" signature="3274:3310" ph="..." />
             <marker date="1506216504067" expanded="true" signature="6248:6284" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/leapLibrary.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

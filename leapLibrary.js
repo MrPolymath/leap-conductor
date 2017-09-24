@@ -1,3 +1,4 @@
-/**
- * Created by nick-dev on 9/23/17.
- */
+function getFist(frame){
+    return(frame.hands[0].grabStrength);
+}
+module.exports.getFist = getFist;
